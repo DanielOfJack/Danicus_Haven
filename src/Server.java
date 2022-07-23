@@ -22,7 +22,7 @@ public class Server implements Runnable{
     @Override
     public void run() {
         try {
-            ServerSocket server = new ServerSocket(9999);
+            server = new ServerSocket(9999);
             pool = Executors.newCachedThreadPool();
             while (!done) {
                 Socket client = server.accept();
@@ -46,6 +46,7 @@ public class Server implements Runnable{
     public void shutdown() {
         try {
             done = true;
+            pool.shutdown();
             if (!server.isClosed()) {
                 server.close();
             }
@@ -81,6 +82,7 @@ public class Server implements Runnable{
                 String message;
                 while ((message = in.readLine()) != null) {
                     if (message.startsWith("/quit")) {
+                        System.out.println(nickname + " disconnected!");
                         broadcast(nickname + " left the chat!");
                         shutdown();
                     } else {
